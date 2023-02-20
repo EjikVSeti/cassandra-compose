@@ -1,0 +1,27 @@
+{
+  "name": "cassandra-compose",
+  "version": "1.0.0",
+  "description": "Cassandra cluster, 1 datacenter and 2 nodes",
+  "scripts": {
+    "build:image": "docker build --no-cache -t cassandra-ssh .",
+    "delete:image": "if docker image inspect cassandra-ssh &> /dev/null; then docker rmi cassandra-ssh; fi",
+    "create:network": "docker network create cassandra-net",
+    "delete:network": "if docker network inspect cassandra-net &> /dev/null; then docker network rm cassandra-net; fi",
+    "run:compose": "docker-compose -f docker-compose.yml up",
+    "restart:ssh": "docker exec node1 service ssh restart && docker exec node2 service ssh restart",
+    "stop:ssh": "docker exec node1 service ssh stop && docker exec node2 service ssh stop",
+    "status:ssh": "docker exec node1 service ssh status && docker exec node2 service ssh status",
+    "run": "npm run build:image && npm run create:network && npm run start && npm run restart:ssh",
+    "start": "docker-compose -f docker-compose.yml up -d",
+    "down": "docker-compose -f docker-compose.yml down",
+    "down:v": "docker-compose -f docker-compose.yml down -v",
+    "stop": "docker-compose -f docker-compose.yml stop",
+    "docker:prune:volume": "docker volume prune -f",
+    "docker:prune:system": "docker system prune -a -f",
+    "docker:prune": "npm run docker:prune:volume && npm run docker:prune:system",
+    "remove": "npm run docker:prune && if [ -d 'data' ]; then rm -rf data; fi && npm run delete:network && npm run delete:image"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

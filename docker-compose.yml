@@ -1,0 +1,54 @@
+version: "3.8"
+
+services:
+  node1:
+    extra_hosts:
+      - "node1:192.168.32.2"
+    image: cassandra-ssh
+    container_name: node1
+    environment:
+      - CASSANDRA_CLUSTER_NAME=mycluster
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - CASSANDRA_SEEDS=node1,node2
+      - CASSANDRA_LISTEN_ADDRESS=node1
+      - CASSANDRA_BROADCAST_ADDRESS=node1
+    networks:
+      cassandra-net:
+        ipv4_address: 192.168.32.2
+    ports:
+      - 9043:9042
+      - 7001:7000
+      - 7199:7199
+      - 2222:22
+    volumes:
+      - ./data/node1:/var/lib/cassandra
+
+  node2:
+    extra_hosts:
+      - "node2:192.168.32.3"
+    image: cassandra-ssh
+    container_name: node2
+    environment:
+      - CASSANDRA_CLUSTER_NAME=mycluster
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - CASSANDRA_SEEDS=node1,node2
+      - CASSANDRA_LISTEN_ADDRESS=node2
+      - CASSANDRA_BROADCAST_ADDRESS=node2
+    networks:
+      cassandra-net:
+        ipv4_address: 192.168.32.3
+    ports:
+      - 9044:9042
+      - 7002:7000
+      - 7181:7199
+      - 2223:22
+    volumes:
+      - ./data/node2:/var/lib/cassandra
+
+networks:
+  cassandra-net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.32.0/24
