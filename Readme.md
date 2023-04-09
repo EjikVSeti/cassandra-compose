@@ -1,5 +1,6 @@
 # Docker base commands
-#### Run docker with cluster cassandra and nodes: ``````
+
+Run docker with cluster cassandra and nodes: ``npm run run``
 
 # SSH
 This will remove the old key for the host from your known_hosts file.
